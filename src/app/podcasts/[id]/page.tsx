@@ -2,7 +2,7 @@ import { PodcastSearchBar } from "@/components/podcastSearchBar";
 import { geistSans, geistMono } from "@/app/fonts";
 import { Suspense } from "react";
 import { cn } from "@/lib/utils";
-import { PodcastOverview } from "@/components/podcastOverview";
+import { RecommendationOverview } from "@/components/recommendationOverview";
 import { LoadingSpinner } from "@/components/ui/loadingSpinner";
 import type { Metadata } from "next";
 import type { PodcastEpisode } from "@/types/podcasts";
@@ -18,8 +18,6 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   // read route params
   const id = (await params).id;
-  // Example function to fetch podcast data based on the ID
-  // Replace this with your actual logic to fetch podcast details
 
   const response = await fetch(
     `https://itunes.apple.com/lookup?id=${id}&entity=podcast
@@ -69,7 +67,7 @@ export default async function PodcastPage({ params }: { params: Params }) {
             "flex flex-col h-full w-full items-center justify-start sm:justify-center p-2 pb-8 sm:p-8 gap-8"
           )}
         >
-          <PodcastOverview id={decodedId} />
+          <RecommendationOverview id={decodedId} />
         </div>
       </Suspense>
     </main>

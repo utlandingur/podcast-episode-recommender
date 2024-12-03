@@ -1,5 +1,5 @@
 "use client";
-import { lookupPodcastEpisodes } from "@/serverActions/looksPodcastEpisodes";
+import { lookupPodcastEpisodes } from "@/serverActions/lookupPodcastEpisodes";
 import { useQuery } from "@tanstack/react-query";
 
 export const usePodcastEpisodes = (id: string) => {
