@@ -8,6 +8,7 @@ export const usePodcastSummary = (id: string, episodes: PodcastEpisode[]) => {
     queryFn: async () => {
       const keywords = await lookupPodcastSummary(episodes.slice(0, 50));
       if (!keywords) return undefined;
+
       return keywords;
     },
     staleTime: 24 * 60 * 60 * 1000, // Cache results for 1 day

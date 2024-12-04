@@ -1,7 +1,7 @@
 import { ResponseSchema, SchemaType } from "@google/generative-ai";
 
 // Not exhaustively tested, but should work for most cases
-export type InferSchemaType<T extends Record<string, ResponseSchema>> = {
+type InferSchemaType<T extends Record<string, ResponseSchema>> = {
   [K in keyof T]: T[K]["type"] extends SchemaType.STRING
     ? string
     : T[K]["type"] extends SchemaType.NUMBER | SchemaType.INTEGER
@@ -18,3 +18,7 @@ export type InferSchemaType<T extends Record<string, ResponseSchema>> = {
       : Record<string, unknown>
     : unknown;
 };
+
+export type SchemaProperties = Record<string, ResponseSchema>;
+
+export type InferSchema<T extends SchemaProperties> = InferSchemaType<T>;

@@ -1,14 +1,15 @@
-type RedditPost = {
-  kind: string;
-  title: string;
-  subreddit: string;
-  author: string;
-  created_utc: number;
-  permalink: string;
-  url: string;
-  ups: number;
-  downs: number;
-  num_comments: number;
+import {
+  RedditSort,
+  RedditTimePeriod,
+  RedditPost,
+  Subreddit,
+} from "@/types/reddit";
+
+type FetchRedditPostOptions = {
+  subredditDisplayName: string;
+  sorting?: RedditSort;
+  timePeriod?: RedditTimePeriod;
+  limit?: number;
 };
 
 type RedditPostResponse = {
@@ -37,37 +38,18 @@ type SubredditSearchResponse = {
   };
 };
 
-type RedditTimePeriod = "hour" | "day" | "week" | "month" | "year" | "all";
-
-type RedditSort = "hot" | "new" | "top" | "rising" | "controversial";
-
-type Subreddit = {
-  displayName: string; // e.g. technology
-  displayNamePrefixed: string; // e.g. r/technology
-  description: string;
-  subscribers: number;
-  url: string;
-  over18: boolean;
-  lang: string;
-};
-
-type FetchRedditPostOptions = {
-  subreddit: string;
-  sorting?: RedditSort;
-  timePeriod?: RedditTimePeriod;
-  limit?: number;
-};
-
 export const fetchRedditPosts = async ({
-  subreddit,
+  subredditDisplayName,
   sorting = "rising",
   timePeriod = "week",
   limit = 10,
 }: FetchRedditPostOptions): Promise<RedditPost[]> => {
-  const url = new URL(`https://www.reddit.com/r/${subreddit}/${sorting}.json`);
-  url.searchParams.append("limit", limit + ""); // Limit to 100 posts
+  const url = new URL(
+    `https://www.reddit.com/r/${subredditDisplayName}/${sorting}.json`
+  );
+  url.searchParams.append("limit", limit + "");
   if (sorting === "top" || sorting === "controversial")
-    url.searchParams.append("t", timePeriod); // All time
+    url.searchParams.append("t", timePeriod);
 
   try {
     const response = await fetch(url);
@@ -126,6 +108,46 @@ export const fetchSubreddits = async ({
       `Failed to fetch subreddits for keyword:${keyword}. Error is`,
       error
     );
+    return [];
+  }
+};
+
+export const fetchTrendingRedditData = async (
+  keywords: string[]
+): Promise<RedditPost[]> => {
+  // limit the number of keywords from 1 to 4
+  if (!keywords.length) return [];
+  if (keywords.length > 4) keywords = keywords.slice(0, 3);
+  try {
+    const subredditResults = await Promise.allSettled(
+      keywords.map((keyword) => fetchSubreddits({ keyword }))
+    );
+
+    const subreddits = subredditResults
+      .filter(
+        (result): result is PromiseFulfilledResult<Subreddit[]> =>
+          result.status === "fulfilled"
+      )
+      .map((result) => result.value)
+      .flat();
+
+    const postsResults = await Promise.allSettled(
+      await subreddits.map((subreddit) =>
+        fetchRedditPosts({ subredditDisplayName: subreddit.displayName })
+      )
+    );
+
+    const posts = postsResults
+      .filter(
+        (result): result is PromiseFulfilledResult<RedditPost[]> =>
+          result.status === "fulfilled"
+      )
+      .map((result) => result.value)
+      .flat();
+
+    return posts;
+  } catch (error) {
+    console.error("Failed to fetch trending Reddit data:", error);
     return [];
   }
 };
