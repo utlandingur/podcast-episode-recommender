@@ -7,7 +7,17 @@ const schemaProperties = {
   trends: {
     type: SchemaType.ARRAY,
     items: {
-      type: SchemaType.STRING,
+      type: SchemaType.OBJECT,
+      properties: {
+        description: {
+          type: SchemaType.STRING,
+          description: "Short string describing a trend",
+        },
+        title: {
+          type: SchemaType.STRING,
+          description: "Title of the trend",
+        },
+      },
       description: "Short string describing a trend",
     },
     description:

@@ -12,11 +12,15 @@ export const PodcastSummary = ({ recommendation }: PodcastSummaryProps) => {
       <h2>Recommendation summary</h2>
       <p>{recommendationSummary}</p>
       <h2>Trends</h2>
-      <ul>
-        {trends.map((trend) => (
-          <li key={trend}>{trend}</li>
+      <div>
+        <h2>Trends</h2>
+        {trends.map((trend, index) => (
+          <div key={index}>
+            <h3>{trend.title}</h3>
+            <p>{trend.description}</p>
+          </div>
         ))}
-      </ul>
+      </div>
       <h2>Recommendations</h2>
       <div>
         {recommendations.map((suggestion, index) => (
