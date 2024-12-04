@@ -9,7 +9,9 @@ import {
 const geminiModel = (
   responseSchema: ResponseSchema
 ): { model: GenerativeModel | undefined; error: string | undefined } => {
-  const apiKey = process.env.GEMINI_API_KEY;
+  // DELETE
+  const apiKey = "AIzaSyDqCxUEr1l4XqKawhoBw3jkUqwxf1sq56M";
+  // const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) return { model: undefined, error: "No gemini API key" };
 
   try {

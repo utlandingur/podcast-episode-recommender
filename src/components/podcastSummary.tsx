@@ -1,30 +1,31 @@
-import { usePodcastSummary } from "@/hooks/usePodcastSummary";
-import { PodcastEpisode } from "../../podcast-downloader/src/types/podcasts";
-import { useEffect } from "react";
+import { Recommendation } from "@/utils/generatePodcastRecommendation";
 
 type PodcastSummaryProps = {
-  id: string;
-  podcastEpisodes: PodcastEpisode[];
+  recommendation: Recommendation;
 };
 
-export const PodcastSummary = ({
-  id,
-  podcastEpisodes,
-}: PodcastSummaryProps) => {
-  const { data: podcastSummary } = usePodcastSummary(id, podcastEpisodes);
-  useEffect(() => {
-    console.log("podcast episodes are:", podcastEpisodes);
-    console.log("podcast summary is:", podcastSummary);
-  }, [podcastEpisodes, podcastSummary]);
+export const PodcastSummary = ({ recommendation }: PodcastSummaryProps) => {
+  const { trends, recommendationSummary, recommendations } = recommendation;
   return (
     <div>
-      <p>{podcastSummary?.response?.summary}</p>
-      <h2>Keywords:</h2>
+      <h1>Podcast Summary stuff</h1>
+      <h2>Recommendation summary</h2>
+      <p>{recommendationSummary}</p>
+      <h2>Trends</h2>
       <ul>
-        {podcastSummary?.response?.keywords.map((keyword, index) => (
-          <li key={index}>{keyword}</li>
+        {trends.map((trend) => (
+          <li key={trend}>{trend}</li>
         ))}
       </ul>
+      <h2>Recommendations</h2>
+      <div>
+        {recommendations.map((suggestion, index) => (
+          <div key={index}>
+            <h3>{suggestion.title}</h3>
+            <p>{suggestion.description}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };

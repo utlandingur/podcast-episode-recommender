@@ -22,20 +22,9 @@ const schema = createSchema(
   schemaProperties
 );
 
-export const lookupPodcastSummary = async (episodes: PodcastEpisode[]) => {
+export const generatePodcastSummary = async (episodes: PodcastEpisode[]) => {
   return await generateContent<InferSchema<typeof schemaProperties>>(
     schema,
     episodes
   );
 };
-
-// export type EpisodeSearchInfo = {
-//   trackName: string;
-//   releaseDate: Date;
-//   trackTimeMillis: number;
-// };
-
-// export type PodcastKeywordSearchInfo = {
-//   collectionName: string;
-//   episodes: EpisodeSearchInfo[];
-// };
