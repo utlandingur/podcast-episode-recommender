@@ -82,7 +82,7 @@ export const useRecommendation = (id: string) => {
 
   return {
     recommendation,
-    error: !fetchStatus ? error : undefined, // only show error if not fetching
+    error, // only show error if not fetching
     isLoading,
     fetchStatus,
   };

@@ -10,11 +10,9 @@ type RecommendationOverviewProps = {
 export const RecommendationOverview = ({ id }: RecommendationOverviewProps) => {
   const { recommendation, error, fetchStatus } = useRecommendation(id);
 
-  if (error) return <Sorry />;
-
   if (fetchStatus) return <Loading status={fetchStatus} />;
 
-  if (!recommendation) return <Sorry />;
+  if (!recommendation || error) return <Sorry />;
 
   return (
     <>
