@@ -8,12 +8,13 @@ type RecommendationOverviewProps = {
 };
 
 export const RecommendationOverview = ({ id }: RecommendationOverviewProps) => {
-  const { recommendation, error, isLoading } = useRecommendation(id);
+  const { recommendation, error, fetchStatus } = useRecommendation(id);
 
-  if (isLoading)
+  if (fetchStatus)
     return (
       <div className="flex justify-center items-center">
         <LoadingSpinner />
+        <div>{fetchStatus}</div>
       </div>
     );
 
