@@ -1,7 +1,7 @@
 "use client";
-import { LoadingSpinner } from "./ui/loadingSpinner";
 import { PodcastSummary } from "./podcastSummary";
-import { useRecommendation } from "@/hooks/useRecommendation";
+import { FetchStatus, useRecommendation } from "@/hooks/useRecommendation";
+import { SorryAnimation, TappingFingers } from "@/assets/Animations";
 
 type RecommendationOverviewProps = {
   id: string;
@@ -10,16 +10,11 @@ type RecommendationOverviewProps = {
 export const RecommendationOverview = ({ id }: RecommendationOverviewProps) => {
   const { recommendation, error, fetchStatus } = useRecommendation(id);
 
-  if (fetchStatus)
-    return (
-      <div className="flex justify-center items-center">
-        <LoadingSpinner />
-        <div>{fetchStatus}</div>
-      </div>
-    );
+  if (error) return <Sorry />;
 
-  // TODO - handle better
-  if (error || !recommendation) return <div>Sorry, there was an error</div>;
+  if (fetchStatus) return <Loading status={fetchStatus} />;
+
+  if (!recommendation) return <Sorry />;
 
   return (
     <>
@@ -28,3 +23,21 @@ export const RecommendationOverview = ({ id }: RecommendationOverviewProps) => {
     </>
   );
 };
+
+const Sorry = () => (
+  <div className="flex flex-col justify-center items-center">
+    <div className="w-32 h-32">
+      <SorryAnimation />
+    </div>
+    <div>Sorry, something went wrong. Please try again later</div>
+  </div>
+);
+
+const Loading = ({ status }: { status: FetchStatus }) => (
+  <div className="flex flex-col justify-center items-center">
+    <div className="w-32 h-32">
+      <TappingFingers />
+    </div>
+    <div>{status}</div>
+  </div>
+);

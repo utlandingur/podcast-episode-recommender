@@ -6,7 +6,7 @@ import { fetchTrendingRedditData } from "@/utils/fetchRedditData";
 import { generatePodcastRecommendation } from "@/utils/generatePodcastRecommendation";
 import { useState } from "react";
 
-enum FetchStatus {
+export enum FetchStatus {
   PODCAST = "Fetching podcast information",
   KEYWORDS = "Generating relevant keywords",
   SEARCHING = "Searching the web",
@@ -72,8 +72,15 @@ export const useRecommendation = (id: string) => {
 
       return result;
     },
+    retry: (failureCount) => failureCount < 1, // Retry once more if fails
+    retryOnMount: false, // Don't retry on mount
     staleTime: 24 * 60 * 60 * 1000, // Cache results for 1 day
   });
 
-  return { recommendation, error, isLoading, fetchStatus };
+  return {
+    recommendation,
+    error: !fetchStatus ? error : undefined, // only show error if not fetching
+    isLoading,
+    fetchStatus,
+  };
 };
