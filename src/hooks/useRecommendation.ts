@@ -68,11 +68,12 @@ export const useRecommendation = (id: string) => {
     queryKey: ["recommendation", id],
     queryFn: async ({ queryKey }: { queryKey: [string, string] }) => {
       const [, id] = queryKey;
-      try {
-        return await fetchRecommendation(id);
-      } catch (error) {
-        throw error;
+      const result = await fetchRecommendation(id);
+      if (!result) {
+        throw new Error("No recommendation generated");
       }
+
+      return result;
     },
     retry: (failureCount) => failureCount < 1, // Retry once more if fails
     retryOnMount: false, // Don't retry on mount
