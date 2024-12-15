@@ -4,42 +4,42 @@ import { Suspense } from "react";
 import { cn } from "@/lib/utils";
 import { RecommendationOverview } from "@/components/recommendationOverview";
 import { LoadingSpinner } from "@/components/ui/loadingSpinner";
-import type { Metadata } from "next";
-import type { PodcastEpisode } from "@/types/podcasts";
+// import type { Metadata } from "next";
+// import type { PodcastEpisode } from "@/types/podcasts";
 
 type Params = Promise<{
   id: string;
 }>;
 
-export async function generateMetadata({
-  params,
-}: {
-  params: Params;
-}): Promise<Metadata> {
-  // read route params
-  const id = (await params).id;
+// export async function generateMetadata({
+//   params,
+// }: {
+//   params: Params;
+// }): Promise<Metadata> {
+//   // read route params
+//   const id = (await params).id;
 
-  const response = await fetch(
-    `https://itunes.apple.com/lookup?id=${id}&entity=podcast
-    `,
-    { cache: "force-cache" }
-  );
-  const data = await response.json();
-  const episode: PodcastEpisode = data.results[0];
+//   const response = await fetch(
+//     `https://itunes.apple.com/lookup?id=${id}&entity=podcast
+//     `,
+//     { cache: "force-cache" }
+//   );
+//   const data = await response.json();
+//   const episode: PodcastEpisode = data.results[0];
 
-  if (!episode) {
-    return {
-      title: "Podcast not found",
-      description: "The podcast you're looking for could not be found.",
-    };
-  }
-  const { collectionName } = episode;
+//   if (!episode) {
+//     return {
+//       title: "Podcast not found",
+//       description: "The podcast you're looking for could not be found.",
+//     };
+//   }
+//   const { collectionName } = episode;
 
-  return {
-    title: `Download ${collectionName} podcast episodes`,
-    description: `View and download episodes from ${collectionName}.`,
-  };
-}
+//   return {
+//     title: `Download ${collectionName} podcast episodes`,
+//     description: `View and download episodes from ${collectionName}.`,
+//   };
+// }
 
 export default async function PodcastPage({ params }: { params: Params }) {
   const id = (await params).id;

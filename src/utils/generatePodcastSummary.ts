@@ -3,7 +3,8 @@ import type { InferSchema } from "@/types/gemini";
 import type { PodcastEpisodeForAI } from "@/types/podcasts";
 
 import { SchemaType } from "@google/generative-ai";
-import { createSchema, generateContent } from "./geminiUtils";
+import { createSchema } from "./geminiUtils";
+import { getGeminiResponse } from "@/serverActions/getGeminiResponse";
 
 const schemaProperties = {
   summary: {
@@ -36,7 +37,7 @@ export const generatePodcastSummary = async (
   episodes: PodcastEpisodeForAI[],
   podcastName: string
 ) => {
-  return await generateContent<InferSchema<typeof schemaProperties>>(schema, {
+  return await getGeminiResponse<InferSchema<typeof schemaProperties>>(schema, {
     episodes,
     podcastName, // ensures the model has the podcast name
   });
