@@ -1,7 +1,7 @@
 "use server";
 import { createHash } from "crypto";
 
-const apiKey = process.env.NEXT_PUBLIC_PODCAST_INDEX_API_KEY;
+const apiKey = process.env.PODCAST_INDEX_API_KEY;
 const apiSecret = process.env.PODCAST_INDEX_API_SECRET;
 if (!apiKey || !apiSecret) {
   throw new Error("Missing API credentials for Podcast Index");
