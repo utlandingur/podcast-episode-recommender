@@ -1,5 +1,4 @@
 import type { InferSchema } from "@/types/gemini";
-import { RedditPost } from "@/types/reddit";
 import { createSchema, generateContent } from "@/utils/geminiModel";
 import { SchemaType } from "@google/generative-ai";
 
@@ -57,11 +56,11 @@ export type Recommendation = InferSchema<typeof schemaProperties>;
 export const generatePodcastRecommendation = async (
   summary: string,
   keywords: string[],
-  redditPosts: RedditPost[]
+  content: unknown // TODO: Use a better type here
 ) => {
   return await generateContent<Recommendation>(schema, {
     summary,
     keywords,
-    redditPosts,
+    content,
   });
 };

@@ -4,6 +4,7 @@ import { generatePodcastSummary } from "@/utils/generatePodcastSummary";
 import { useQuery } from "@tanstack/react-query";
 import { fetchTrendingRedditData } from "@/utils/fetchRedditData";
 import { generatePodcastRecommendation } from "@/utils/generatePodcastRecommendation";
+import { fetchMastadonData } from "@/utils/fetchMastadonData";
 
 const fetchRecommendation = async (id: string) => {
   const episodes = await lookupPodcastEpisodes(id);
@@ -22,10 +23,14 @@ const fetchRecommendation = async (id: string) => {
   }
   const { summary, keywords } = summaryResponse;
 
+  const recentMastadonData = await fetchMastadonData(keywords);
   const trendingRedditData = await fetchTrendingRedditData(keywords);
 
   const { response: recommendationResponse, error: recommendationError } =
-    await generatePodcastRecommendation(summary, keywords, trendingRedditData);
+    await generatePodcastRecommendation(summary, keywords, {
+      trendingRedditData,
+      recentMastadonData,
+    });
 
   if (!recommendationResponse || recommendationError) {
     //TODO - handle better
