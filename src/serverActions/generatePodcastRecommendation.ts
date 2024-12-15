@@ -1,6 +1,7 @@
+"use server";
 import type { InferSchema } from "@/types/gemini";
 import { RedditPost } from "@/types/reddit";
-import { createSchema, generateContent } from "@/utils/geminiModel";
+import { createSchema, generateContent } from "@/serverActions/geminiModel";
 import { SchemaType } from "@google/generative-ai";
 
 const schemaProperties = {

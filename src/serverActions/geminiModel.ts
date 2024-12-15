@@ -1,3 +1,4 @@
+"use server";
 import { InferSchema, SchemaProperties } from "@/types/gemini";
 import {
   GenerativeModel,
@@ -9,7 +10,7 @@ import {
 const geminiModel = (
   responseSchema: ResponseSchema
 ): { model: GenerativeModel | undefined; error: string | undefined } => {
-  const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) return { model: undefined, error: "No gemini API key" };
 
   try {

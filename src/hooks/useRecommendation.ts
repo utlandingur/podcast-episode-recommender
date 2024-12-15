@@ -3,7 +3,8 @@ import { lookupPodcastEpisodes } from "@/utils/lookupPodcastEpisodes";
 import { generatePodcastSummary } from "@/utils/generatePodcastSummary";
 import { useQuery } from "@tanstack/react-query";
 import { fetchTrendingRedditData } from "@/utils/fetchRedditData";
-import { generatePodcastRecommendation } from "@/utils/generatePodcastRecommendation";
+import { generatePodcastRecommendation } from "@/serverActions/generatePodcastRecommendation";
+import type { PodcastEpisodeForAI } from "@/types/podcasts";
 
 const fetchRecommendation = async (id: string) => {
   const episodes = await lookupPodcastEpisodes(id);
@@ -13,8 +14,17 @@ const fetchRecommendation = async (id: string) => {
     throw new Error("No episodes found");
   }
 
+  const episodesToUse = episodes.map((episode) => {
+    const episodeForAI: PodcastEpisodeForAI = {
+      description: episode.description,
+      datePublished: episode.datePublished,
+      transcripts: episode.transcripts,
+    };
+    return episodeForAI;
+  }); // Remove the first episode, which is the podcast itself
   const { response: summaryResponse, error: summaryError } =
-    await generatePodcastSummary(episodes.slice(1)); // Remove the first episode, which is the podcast itself
+    await generatePodcastSummary(episodesToUse, episodes[0].collectionName);
+
   if (!summaryResponse || summaryError) {
     //TODO - handle better
     console.error("No summary generated", summaryError);
