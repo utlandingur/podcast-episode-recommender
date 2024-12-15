@@ -32,7 +32,6 @@ export type PodcastEpisodeResponse = {
 };
 
 export type PodcastEpisode = {
-  collectionName: string;
   description: string;
   datePublished: string; // TODO - convert to date
   episodeNumber: number;

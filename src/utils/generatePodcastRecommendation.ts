@@ -56,13 +56,23 @@ const schema = createSchema(
 
 export type Recommendation = InferSchema<typeof schemaProperties>;
 
+/**
+ * Generates a summary and specific keywords for a podcast.
+ *
+ * @param {string} summary - A summary of the podcast.
+ * @param {string} description - The description of the podcast.
+ * @param {string[]} keywords - Keywords for the podcast.
+ * @returns {RedditPost[]} - A list of relevant Reddit posts.
+ */
 export const generatePodcastRecommendation = async (
   summary: string,
+  description: string,
   keywords: string[],
   redditPosts: RedditPost[]
 ) => {
   return await getGeminiResponse<Recommendation>(schema, {
     summary,
+    description,
     keywords,
     redditPosts,
   });

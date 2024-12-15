@@ -7,7 +7,7 @@ if (!apiKey || !apiSecret) {
   throw new Error("Missing API credentials for Podcast Index");
 }
 // ======== Hash credentials to get the Authorization token ========
-export const generateHeaders = async () => {
+export const getPodcastIndexHeaders = async () => {
   const apiHeaderTime = Math.floor(Date.now() / 1000);
   const sha1Algorithm = "sha1";
 

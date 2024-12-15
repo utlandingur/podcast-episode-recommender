@@ -31,14 +31,17 @@ const schema = createSchema(
  *
  * @param {PodcastEpisodeForAI[]} episodes - An array of podcast episodes to be analyzed.
  * @param {string} podcastName - The name of the podcast.
+ * @param {string} description - The description of the podcast.
  * @returns {Promise<InferSchema<typeof schemaProperties>>} A promise that resolves to the generated summary and keywords.
  */
 export const generatePodcastSummary = async (
   episodes: PodcastEpisodeForAI[],
-  podcastName: string
+  podcastName: string,
+  description: string
 ) => {
   return await getGeminiResponse<InferSchema<typeof schemaProperties>>(schema, {
     episodes,
     podcastName, // ensures the model has the podcast name
+    description,
   });
 };

@@ -1,5 +1,5 @@
 import type { PodcastEpisode, PodcastEpisodeResponse } from "@/types/podcasts";
-import { generateHeaders } from "../serverActions/generatePodIndexHeaders";
+import { getPodcastIndexHeaders } from "../serverActions/getPodcastIndexHeaders";
 
 export const lookupPodcastEpisodes = async (
   id: string
@@ -12,7 +12,7 @@ export const lookupPodcastEpisodes = async (
   // const url = `https://itunes.apple.com/lookup?id=${collectionId}&entity=podcastEpisode`;
   const response = await fetch(url, {
     cache: "force-cache",
-    headers: await generateHeaders(),
+    headers: await getPodcastIndexHeaders(),
     method: "GET",
   });
 
@@ -20,7 +20,6 @@ export const lookupPodcastEpisodes = async (
 
   const episodes = data.items.map((item: PodcastEpisodeResponse) => {
     const {
-      title,
       description,
       datePublished,
       episode,
@@ -30,7 +29,6 @@ export const lookupPodcastEpisodes = async (
     } = item;
 
     const podcastEpisode: PodcastEpisode = {
-      collectionName: title,
       description,
       datePublished,
       episodeNumber: episode,

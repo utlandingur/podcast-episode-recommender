@@ -5,8 +5,11 @@ import { useQuery } from "@tanstack/react-query";
 import { fetchTrendingRedditData } from "@/utils/fetchRedditData";
 import { generatePodcastRecommendation } from "@/utils/generatePodcastRecommendation";
 import type { PodcastEpisodeForAI } from "@/types/podcasts";
+import { lookupPodcast } from "@/utils/lookupPodcast";
 
 const fetchRecommendation = async (id: string) => {
+  const { description, title } = await lookupPodcast(id);
+
   const episodes = await lookupPodcastEpisodes(id);
   if (episodes?.length < 2) {
     //TODO - handle better
@@ -23,7 +26,7 @@ const fetchRecommendation = async (id: string) => {
     return episodeForAI;
   }); // Remove the first episode, which is the podcast itself
   const { response: summaryResponse, error: summaryError } =
-    await generatePodcastSummary(episodesToUse, episodes[0].collectionName);
+    await generatePodcastSummary(episodesToUse, title, description);
 
   if (!summaryResponse || summaryError) {
     //TODO - handle better
@@ -35,7 +38,12 @@ const fetchRecommendation = async (id: string) => {
   const trendingRedditData = await fetchTrendingRedditData(keywords);
 
   const { response: recommendationResponse, error: recommendationError } =
-    await generatePodcastRecommendation(summary, keywords, trendingRedditData);
+    await generatePodcastRecommendation(
+      summary,
+      description,
+      keywords,
+      trendingRedditData
+    );
 
   if (!recommendationResponse || recommendationError) {
     //TODO - handle better
