@@ -1,11 +1,9 @@
 "use client";
 import type { InferSchema } from "@/types/gemini";
 import type { PodcastEpisodeForAI } from "@/types/podcasts";
-import {
-  createSchema,
-  generateContent,
-} from "@/serverActions/createGeminiModel";
+
 import { SchemaType } from "@google/generative-ai";
+import { createSchema, generateContent } from "./geminiUtils";
 
 const schemaProperties = {
   summary: {
