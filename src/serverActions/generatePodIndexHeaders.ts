@@ -7,7 +7,7 @@ if (!apiKey || !apiSecret) {
   throw new Error("Missing API credentials for Podcast Index");
 }
 // ======== Hash credentials to get the Authorization token ========
-export const generateHeaders = () => {
+export const generateHeaders = async () => {
   const apiHeaderTime = Math.floor(Date.now() / 1000);
   const sha1Algorithm = "sha1";
 
@@ -20,6 +20,6 @@ export const generateHeaders = () => {
     "X-Auth-Date": "" + apiHeaderTime,
     "X-Auth-Key": apiKey,
     Authorization: hash4Header,
-    "User-Agent": "SuperPodcastPlayer/1.8",
+    "User-Agent": "PodcastIdeaGenerator/0.1",
   };
 };

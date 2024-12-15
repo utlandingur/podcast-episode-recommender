@@ -1,4 +1,4 @@
-import { Recommendation } from "@/serverActions/generatePodcastRecommendation";
+import { Recommendation } from "@/utils/generatePodcastRecommendation";
 
 type PodcastSummaryProps = {
   recommendation: Recommendation;

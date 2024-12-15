@@ -12,7 +12,7 @@ export const lookupPodcasts = async (
 
   const response = await fetch(url, {
     cache: "force-cache",
-    headers: generateHeaders(),
+    headers: await generateHeaders(),
     method: "GET",
   });
   const data = await response.json();

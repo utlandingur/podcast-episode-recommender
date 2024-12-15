@@ -12,7 +12,7 @@ export const lookupPodcastEpisodes = async (
   // const url = `https://itunes.apple.com/lookup?id=${collectionId}&entity=podcastEpisode`;
   const response = await fetch(url, {
     cache: "force-cache",
-    headers: generateHeaders(),
+    headers: await generateHeaders(),
     method: "GET",
   });
 

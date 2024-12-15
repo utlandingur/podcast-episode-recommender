@@ -3,7 +3,7 @@ import { lookupPodcastEpisodes } from "@/utils/lookupPodcastEpisodes";
 import { generatePodcastSummary } from "@/utils/generatePodcastSummary";
 import { useQuery } from "@tanstack/react-query";
 import { fetchTrendingRedditData } from "@/utils/fetchRedditData";
-import { generatePodcastRecommendation } from "@/serverActions/generatePodcastRecommendation";
+import { generatePodcastRecommendation } from "@/utils/generatePodcastRecommendation";
 import type { PodcastEpisodeForAI } from "@/types/podcasts";
 
 const fetchRecommendation = async (id: string) => {
