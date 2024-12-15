@@ -23,13 +23,13 @@ const fetchRecommendation = async (id: string) => {
   }
   const { summary, keywords } = summaryResponse;
 
-  const recentMastadonData = await fetchMastadonData(keywords);
+  const recentMastadonSearchData = await fetchMastadonData(keywords);
   const trendingRedditData = await fetchTrendingRedditData(keywords);
 
   const { response: recommendationResponse, error: recommendationError } =
     await generatePodcastRecommendation(summary, keywords, {
       trendingRedditData,
-      recentMastadonData,
+      recentMastadonSearchData,
     });
 
   if (!recommendationResponse || recommendationError) {
