@@ -9,7 +9,6 @@ export const lookupPodcastEpisodes = async (
   url.searchParams.append("max", "100"); // Min 1, Max 1000
   url.searchParams.append("fulltext", "true"); // If present, return the full text value of any text fields (ex: description). If not provided, field value is truncated to 100 words.
 
-  // const url = `https://itunes.apple.com/lookup?id=${collectionId}&entity=podcastEpisode`;
   const response = await fetch(url, {
     cache: "force-cache",
     headers: await getPodcastIndexHeaders(),
