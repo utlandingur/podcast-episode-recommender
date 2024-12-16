@@ -13,17 +13,29 @@ const schemaProperties = {
       properties: {
         description: {
           type: SchemaType.STRING,
-          description: "Short string describing a trend",
+          description: "Short description including why relevant",
+          maxLength: 300,
         },
         title: {
           type: SchemaType.STRING,
-          description: "Title of the trend",
+          description: "Subheading for trend",
+          maxLength: 50,
+        },
+        linkToSources: {
+          type: SchemaType.ARRAY,
+          items: {
+            type: SchemaType.STRING,
+          },
+          description: "Links to provided sources that support trend",
+          minItems: 1,
+          maxItems: 3,
         },
       },
-      description: "Short string describing a trend",
     },
     description:
-      "A list of 3-5 trending topics from Reddit that match the podcast's keywords",
+      "A list of trending topics that podcast creators may want to investigate",
+    minItems: 3,
+    maxItems: 5,
   },
   recommendationSummary: {
     type: SchemaType.STRING,
@@ -42,15 +54,24 @@ const schemaProperties = {
           type: SchemaType.STRING,
           description: "Description of the recommendation",
         },
+        linksToSources: {
+          type: SchemaType.ARRAY,
+          items: {
+            type: SchemaType.STRING,
+          },
+          description: "Links to provided sources that support recommendation",
+          minItems: 1,
+          maxItems: 3,
+        },
       },
     },
     description:
-      "A list of 2-3 recommendations for what the podcast should discuss next",
+      "Recommendations for podcast creators next episodes based on trends",
   },
 } as const;
 
 const schema = createSchema(
-  "Provide specific recommendations for podcast creators on what they should discuss next on their specific podcast based on trending data. Be specific as much as possible rather than general. Minimum 200 words",
+  "Generate highly specific and actionable recommendations for podcast creators about what they should discuss next on their podcast. Base your suggestions on current trending data, tailoring them to the podcast's niche or theme. Avoid generalizations and focus on providing detailed and targeted ideas. Include insights that are directly relevant to the podcast's audience and current interests.",
   schemaProperties
 );
 

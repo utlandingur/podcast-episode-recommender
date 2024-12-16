@@ -6,9 +6,23 @@ import { fetchTrendingRedditData } from "@/utils/fetchRedditData";
 import { generatePodcastRecommendation } from "@/utils/generatePodcastRecommendation";
 import type { PodcastEpisodeForAI } from "@/types/podcasts";
 import { lookupPodcast } from "@/utils/lookupPodcast";
+import { useState } from "react";
 
-const fetchRecommendation = async (id: string) => {
+export enum FetchStatus {
+  PODCAST = "Fetching podcast information",
+  KEYWORDS = "Generating relevant keywords",
+  SEARCHING = "Searching the web",
+  RECOMMENDATION = "Generating recommendation",
+}
+
+export const useRecommendation = (id: string) => {
+  const [fetchStatus, setFetchStatus] = useState<FetchStatus | null>(null);
+
+  const fetchRecommendation = async (id: string) => {
   const { description, title } = await lookupPodcast(id);
+  
+  // Fetch podcast information
+  setFetchStatus(FetchStatus.PODCAST);
 
   const episodes = await lookupPodcastEpisodes(id);
   if (episodes?.length < 2) {
@@ -24,7 +38,10 @@ const fetchRecommendation = async (id: string) => {
       transcripts: episode.transcripts,
     };
     return episodeForAI;
-  }); // Remove the first episode, which is the podcast itself
+  });
+  
+  // Generate podcast keywords
+  setFetchStatus(FetchStatus.KEYWORDS);
   const { response: summaryResponse, error: summaryError } =
     await generatePodcastSummary(episodesToUse, title, description);
 
@@ -35,8 +52,12 @@ const fetchRecommendation = async (id: string) => {
   }
   const { summary, keywords } = summaryResponse;
 
+  // Search the web for trending data
+  setFetchStatus(FetchStatus.SEARCHING);
   const trendingRedditData = await fetchTrendingRedditData(keywords);
 
+  // Generate recommendation
+  setFetchStatus(FetchStatus.RECOMMENDATION);
   const { response: recommendationResponse, error: recommendationError } =
     await generatePodcastRecommendation(
       summary,
@@ -44,6 +65,8 @@ const fetchRecommendation = async (id: string) => {
       keywords,
       trendingRedditData
     );
+
+  setFetchStatus(null);
 
   if (!recommendationResponse || recommendationError) {
     //TODO - handle better
@@ -54,7 +77,6 @@ const fetchRecommendation = async (id: string) => {
   return recommendationResponse;
 };
 
-export const useRecommendation = (id: string) => {
   const {
     data: recommendation,
     error,
@@ -64,11 +86,21 @@ export const useRecommendation = (id: string) => {
     queryFn: async ({ queryKey }: { queryKey: [string, string] }) => {
       const [, id] = queryKey;
       const result = await fetchRecommendation(id);
+      if (!result) {
+        throw new Error("No recommendation generated");
+      }
 
       return result;
     },
+    retry: (failureCount) => failureCount < 1, // Retry once more if fails
+    retryOnMount: false, // Don't retry on mount
     staleTime: 24 * 60 * 60 * 1000, // Cache results for 1 day
   });
 
-  return { recommendation, error, isLoading };
+  return {
+    recommendation,
+    error, // only show error if not fetching
+    isLoading,
+    fetchStatus,
+  };
 };
