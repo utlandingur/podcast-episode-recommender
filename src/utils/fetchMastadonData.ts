@@ -29,6 +29,7 @@ export const fetchMastadonData = async (
 };
 
 // Only possible to return recent statuses
+// TODO - get access tokens to get actual data
 const searchMastadon = async (
   query: string
 ): Promise<MastadonSearchResult[]> => {
