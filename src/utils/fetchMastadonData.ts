@@ -4,11 +4,36 @@ import type {
   MastadonSearchResult,
 } from "@/types/mastadon";
 
+export const fetchMastadonData = async (
+  keywords: string[]
+): Promise<MastadonSearchData[]> => {
+  try {
+    const results = await Promise.allSettled(
+      keywords.map(async (keyword) => {
+        const searchResults = await searchMastadon(keyword);
+        return { query: keyword, searchResults };
+      })
+    );
+    const mastadonSearchData = results
+      .filter(
+        (result): result is PromiseFulfilledResult<MastadonSearchData> =>
+          result.status === "fulfilled"
+      )
+      .map((result) => result.value);
+
+    return mastadonSearchData;
+  } catch (error) {
+    console.error("Failed to fetch Mastadon data:", error);
+    return [];
+  }
+};
+
 // Only possible to return recent statuses
+// TODO - get access tokens to get actual data
 const searchMastadon = async (
   query: string
 ): Promise<MastadonSearchResult[]> => {
-  const url = new URL("https://mastodon.social/api/v2/search?");
+  const url = new URL("https://mastodon.social/api/v2/search");
   url.searchParams.append("q", query);
   url.searchParams.append("limit", "40"); // 40 is the max limit
   url.searchParams.append("type", "statuses");
@@ -16,8 +41,11 @@ const searchMastadon = async (
   try {
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Error: ${response.status}`);
+    console.log("response", response, "for url", url);
     const json: MastadonSearchResponse = await response.json();
+    console.log("Mastadon json", json);
     const searchResults = json.statuses.map((status) => {
+      console.log("status", status);
       const searchResult: MastadonSearchResult = {
         createdAt: status.created_at,
         language: status.language,
@@ -29,31 +57,13 @@ const searchMastadon = async (
           title: status.card.title,
           description: status.card.description,
         },
+        url: status.url,
       };
       return searchResult;
     });
     return searchResults;
-  } catch (error) {
-    console.error("Failed to fetch Mastadon data:", error);
+  } catch {
+    console.error("Failed to fetch Mastadon data for query:", query);
     return [];
   }
-};
-
-export const fetchMastadonData = async (
-  keywords: string[]
-): Promise<MastadonSearchData[]> => {
-  const results = await Promise.allSettled(
-    keywords.map(async (keyword) => {
-      const searchResults = await searchMastadon(keyword);
-      return { query: keyword, searchResults };
-    })
-  );
-  const mastadonSearchData = results
-    .filter(
-      (result): result is PromiseFulfilledResult<MastadonSearchData> =>
-        result.status === "fulfilled"
-    )
-    .map((result) => result.value);
-
-  return mastadonSearchData;
 };

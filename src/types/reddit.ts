@@ -3,7 +3,8 @@ export type RedditPost = {
   title: string;
   subreddit: string;
   created_utc: number;
-  permalink: string;
+  permalink?: string;
+  url: URL;
   ups: number;
   downs: number;
   num_comments: number;
@@ -27,4 +28,30 @@ export type Subreddit = {
   url: string;
   over18: boolean;
   lang: string;
+};
+
+export type RedditPostResponse = {
+  kind: string;
+  data: {
+    children: {
+      kind: string;
+      data: Omit<RedditPost, "url">;
+    }[];
+  };
+};
+
+export type SubredditSearchResponse = {
+  kind: string;
+  data: {
+    children: {
+      data: {
+        display_name: string;
+        display_name_prefixed: string;
+        public_description: string;
+        subscribers: number;
+        over18: boolean;
+        lang: string;
+      };
+    }[];
+  };
 };
