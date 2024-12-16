@@ -39,6 +39,7 @@ const searchMastadon = async (
 
   try {
     const response = await fetch(url);
+    console.log("response", response, "for url", url);
     if (!response.ok) throw new Error(`Error: ${response.status}`);
     const json: MastadonSearchResponse = await response.json();
     const searchResults = json.statuses.map((status) => {
