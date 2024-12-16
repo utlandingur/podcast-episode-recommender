@@ -1,15 +1,11 @@
 "use client";
-import { lookupPodcastEpisodes } from "@/utils/lookupPodcastEpisodes";
-import { generatePodcastSummary } from "@/utils/generatePodcastSummary";
 import { useQuery } from "@tanstack/react-query";
-import { fetchTrendingRedditData } from "@/utils/fetchRedditData";
 import { generatePodcastRecommendation } from "@/utils/generatePodcastRecommendation";
-
-import { fetchMastadonData } from "@/utils/fetchMastadonData";
-
-import type { PodcastEpisodeForAI } from "@/types/podcasts";
 import { lookupPodcast } from "@/utils/lookupPodcast";
 import { useState } from "react";
+import { fetchTrendingData } from "@/utils/fetchTrendingData";
+import { fetchPodcastInformation } from "@/utils/fetchPodcastInformation";
+import { fetchKeywords } from "@/utils/fetchKeywords";
 
 export enum FetchStatus {
   PODCAST = "Fetching podcast information",
@@ -22,66 +18,45 @@ export const useRecommendation = (id: string) => {
   const [fetchStatus, setFetchStatus] = useState<FetchStatus | null>(null);
 
   const fetchRecommendation = async (id: string) => {
-  const { description, title } = await lookupPodcast(id);
-  
-  // Fetch podcast information
-  setFetchStatus(FetchStatus.PODCAST);
+    const { title, description } = await lookupPodcast(id);
 
-  const episodes = await lookupPodcastEpisodes(id);
-  if (episodes?.length < 2) {
-    //TODO - handle better
-    console.error("No episodes found");
-    throw new Error("No episodes found");
-  }
+    // Fetch podcast information
+    setFetchStatus(FetchStatus.PODCAST);
+    const episodes = await fetchPodcastInformation(id);
 
-  const episodesToUse = episodes.map((episode) => {
-    const episodeForAI: PodcastEpisodeForAI = {
-      description: episode.description,
-      datePublished: episode.datePublished,
-      transcripts: episode.transcripts,
-    };
-    return episodeForAI;
-  });
-  
-  // Generate podcast keywords
-  setFetchStatus(FetchStatus.KEYWORDS);
-    
-  const { response: summaryResponse, error: summaryError } =
-    await generatePodcastSummary(episodesToUse, title, description);
+    // Generate podcast keywords
+    setFetchStatus(FetchStatus.KEYWORDS);
+    const { keywords, summary } = await fetchKeywords(
+      episodes,
+      title,
+      description
+    );
 
-  if (!summaryResponse || summaryError) {
-    //TODO - handle better
-    console.error("No summary generated", summaryError);
-    throw new Error("No summary generated");
-  }
-  const { summary, keywords } = summaryResponse;
+    // Search the web for trending data
+    setFetchStatus(FetchStatus.SEARCHING);
+    const trendingData = await fetchTrendingData(keywords);
 
+    // Generate recommendation
+    setFetchStatus(FetchStatus.RECOMMENDATION);
 
-  // Search the web for trending data
-  setFetchStatus(FetchStatus.SEARCHING);
-    
-  const recentMastadonSearchData = await fetchMastadonData(keywords);
-  const trendingRedditData = await fetchTrendingRedditData(keywords);
+    const { response: recommendation, error: recommendationError } =
+      await generatePodcastRecommendation(
+        summary,
+        description,
+        keywords,
+        trendingData
+      );
 
-  // Generate recommendation
-  setFetchStatus(FetchStatus.RECOMMENDATION);
-    
-  const { response: recommendationResponse, error: recommendationError } =
-    await generatePodcastRecommendation(summary, description, keywords, {
-      trendingRedditData,
-      recentMastadonSearchData,
-    });
+    if (!recommendation || recommendationError) {
+      //TODO - handle better
+      console.error("No recommendation generated", recommendationError);
+      throw new Error("No recommendation generated");
+    }
 
-  setFetchStatus(null);
+    setFetchStatus(null);
 
-  if (!recommendationResponse || recommendationError) {
-    //TODO - handle better
-    console.error("No recommendation generated", recommendationError);
-    throw new Error("No recommendation generated");
-  }
-
-  return recommendationResponse;
-};
+    return recommendation;
+  };
 
   const {
     data: recommendation,

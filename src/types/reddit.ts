@@ -28,3 +28,29 @@ export type Subreddit = {
   over18: boolean;
   lang: string;
 };
+
+export type RedditPostResponse = {
+  kind: string;
+  data: {
+    children: {
+      kind: string;
+      data: Omit<RedditPost, "kind">;
+    }[];
+  };
+};
+
+export type SubredditSearchResponse = {
+  kind: string;
+  data: {
+    children: {
+      data: {
+        display_name: string;
+        display_name_prefixed: string;
+        public_description: string;
+        subscribers: number;
+        over18: boolean;
+        lang: string;
+      };
+    }[];
+  };
+};

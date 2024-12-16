@@ -3,7 +3,46 @@ import {
   RedditTimePeriod,
   RedditPost,
   Subreddit,
+  RedditPostResponse,
+  SubredditSearchResponse,
 } from "@/types/reddit";
+
+export const fetchTrendingRedditData = async (
+  keywords: string[]
+): Promise<RedditPost[]> => {
+  try {
+    const subredditResults = await Promise.allSettled(
+      keywords.map((keyword) => fetchSubreddits({ keyword }))
+    );
+
+    const subreddits = subredditResults
+      .filter(
+        (result): result is PromiseFulfilledResult<Subreddit[]> =>
+          result.status === "fulfilled"
+      )
+      .map((result) => result.value)
+      .flat();
+
+    const postsResults = await Promise.allSettled(
+      await subreddits.map((subreddit) =>
+        fetchRedditPosts({ subredditDisplayName: subreddit.displayName })
+      )
+    );
+
+    const posts = postsResults
+      .filter(
+        (result): result is PromiseFulfilledResult<RedditPost[]> =>
+          result.status === "fulfilled"
+      )
+      .map((result) => result.value)
+      .flat();
+
+    return posts;
+  } catch (error) {
+    console.error("Failed to fetch trending Reddit data:", error);
+    return [];
+  }
+};
 
 type FetchRedditPostOptions = {
   subredditDisplayName: string;
@@ -12,33 +51,7 @@ type FetchRedditPostOptions = {
   limit?: number;
 };
 
-type RedditPostResponse = {
-  kind: string;
-  data: {
-    children: {
-      kind: string;
-      data: Omit<RedditPost, "kind">;
-    }[];
-  };
-};
-
-type SubredditSearchResponse = {
-  kind: string;
-  data: {
-    children: {
-      data: {
-        display_name: string;
-        display_name_prefixed: string;
-        public_description: string;
-        subscribers: number;
-        over18: boolean;
-        lang: string;
-      };
-    }[];
-  };
-};
-
-export const fetchRedditPosts = async ({
+const fetchRedditPosts = async ({
   subredditDisplayName,
   sorting = "rising",
   timePeriod = "week",
@@ -76,7 +89,7 @@ type FetchSubRedditOptions = {
   limit?: number;
 };
 
-export const fetchSubreddits = async ({
+const fetchSubreddits = async ({
   keyword,
   limit = 3,
 }: FetchSubRedditOptions): Promise<Subreddit[]> => {
@@ -105,46 +118,6 @@ export const fetchSubreddits = async ({
       `Failed to fetch subreddits for keyword:${keyword}. Error is`,
       error
     );
-    return [];
-  }
-};
-
-export const fetchTrendingRedditData = async (
-  keywords: string[]
-): Promise<RedditPost[]> => {
-  // limit the number of keywords from 1 to 4
-  if (!keywords.length) return [];
-  if (keywords.length > 4) keywords = keywords.slice(0, 3);
-  try {
-    const subredditResults = await Promise.allSettled(
-      keywords.map((keyword) => fetchSubreddits({ keyword }))
-    );
-
-    const subreddits = subredditResults
-      .filter(
-        (result): result is PromiseFulfilledResult<Subreddit[]> =>
-          result.status === "fulfilled"
-      )
-      .map((result) => result.value)
-      .flat();
-
-    const postsResults = await Promise.allSettled(
-      await subreddits.map((subreddit) =>
-        fetchRedditPosts({ subredditDisplayName: subreddit.displayName })
-      )
-    );
-
-    const posts = postsResults
-      .filter(
-        (result): result is PromiseFulfilledResult<RedditPost[]> =>
-          result.status === "fulfilled"
-      )
-      .map((result) => result.value)
-      .flat();
-
-    return posts;
-  } catch (error) {
-    console.error("Failed to fetch trending Reddit data:", error);
     return [];
   }
 };
