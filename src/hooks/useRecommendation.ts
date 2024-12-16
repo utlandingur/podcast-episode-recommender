@@ -39,6 +39,13 @@ export const useRecommendation = (id: string) => {
     // Generate recommendation
     setFetchStatus(FetchStatus.RECOMMENDATION);
 
+    console.log("data sent is", {
+      summary,
+      description,
+      keywords,
+      trendingData,
+    });
+
     const { response: recommendation, error: recommendationError } =
       await generatePodcastRecommendation(
         summary,
@@ -54,7 +61,7 @@ export const useRecommendation = (id: string) => {
     }
 
     setFetchStatus(null);
-
+    console.log("recommendation is", recommendation);
     return recommendation;
   };
 
