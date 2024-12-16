@@ -1,15 +1,18 @@
+"use server";
 import { InferSchema, SchemaProperties } from "@/types/gemini";
 import {
   GenerativeModel,
   GoogleGenerativeAI,
   type ResponseSchema,
-  SchemaType,
 } from "@google/generative-ai";
 
-const geminiModel = (
+const createGeminiModel = async (
   responseSchema: ResponseSchema
-): { model: GenerativeModel | undefined; error: string | undefined } => {
-  const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
+): Promise<{
+  model: GenerativeModel | undefined;
+  error: string | undefined;
+}> => {
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) return { model: undefined, error: "No gemini API key" };
 
   try {
@@ -30,7 +33,7 @@ const geminiModel = (
   }
 };
 
-export const generateContent = async <
+export const getGeminiResponse = async <
   T extends InferSchema<SchemaProperties> // InferSchemaType<typeof schemaProperties>
 >(
   schema: ResponseSchema,
@@ -45,7 +48,7 @@ export const generateContent = async <
       error: undefined;
     }
 > => {
-  const { model, error } = geminiModel(schema);
+  const { model, error } = await createGeminiModel(schema);
   if (!model) {
     return { response: undefined, error };
   }
@@ -59,16 +62,4 @@ export const generateContent = async <
       error: error instanceof Error ? error.message : "Unknown error",
     };
   }
-};
-
-export const createSchema = (
-  description: string,
-  properties: SchemaProperties
-): ResponseSchema => {
-  return {
-    description,
-    type: SchemaType.OBJECT,
-    properties,
-    required: Object.keys(properties),
-  };
 };

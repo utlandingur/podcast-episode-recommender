@@ -1,19 +1,23 @@
+"use client";
 import type { InferSchema } from "@/types/gemini";
-import type { PodcastEpisode } from "@/types/podcasts";
-import { createSchema, generateContent } from "@/utils/geminiModel";
+import type { PodcastEpisodeForAI } from "@/types/podcasts";
+
 import { SchemaType } from "@google/generative-ai";
+import { createSchema } from "./geminiUtils";
+import { getGeminiResponse } from "@/serverActions/getGeminiResponse";
 
 const schemaProperties = {
   summary: {
     type: SchemaType.STRING,
-    description: "A 2-4 line summary of the podcast, incl frequency & niche",
+    description:
+      "A paragraphy summary of the topics recommended for discussion for the podcast's niche.",
   },
   keywords: {
     type: SchemaType.ARRAY,
     items: {
       type: SchemaType.STRING,
     },
-    description: "An array of 4 keywords describing the podcast's main niches",
+    description: "4 keywords describing the podcast's primary niches",
   },
 } as const;
 
@@ -22,9 +26,22 @@ const schema = createSchema(
   schemaProperties
 );
 
-export const generatePodcastSummary = async (episodes: PodcastEpisode[]) => {
-  return await generateContent<InferSchema<typeof schemaProperties>>(
-    schema,
-    episodes
-  );
+/**
+ * Generates a summary and specific keywords for a podcast.
+ *
+ * @param {PodcastEpisodeForAI[]} episodes - An array of podcast episodes to be analyzed.
+ * @param {string} podcastName - The name of the podcast.
+ * @param {string} description - The description of the podcast.
+ * @returns {Promise<InferSchema<typeof schemaProperties>>} A promise that resolves to the generated summary and keywords.
+ */
+export const generatePodcastSummary = async (
+  episodes: PodcastEpisodeForAI[],
+  podcastName: string,
+  description: string
+) => {
+  return await getGeminiResponse<InferSchema<typeof schemaProperties>>(schema, {
+    episodes,
+    podcastName, // ensures the model has the podcast name
+    description,
+  });
 };

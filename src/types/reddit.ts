@@ -1,12 +1,9 @@
 // we may not actually need most of these types. especially if it reduces cost with the generative AI model
 export type RedditPost = {
-  kind: string;
   title: string;
   subreddit: string;
-  author: string;
   created_utc: number;
   permalink: string;
-  url: string;
   ups: number;
   downs: number;
   num_comments: number;
