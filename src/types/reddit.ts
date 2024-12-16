@@ -3,7 +3,8 @@ export type RedditPost = {
   title: string;
   subreddit: string;
   created_utc: number;
-  permalink: string;
+  permalink?: string;
+  url: URL;
   ups: number;
   downs: number;
   num_comments: number;
@@ -34,7 +35,7 @@ export type RedditPostResponse = {
   data: {
     children: {
       kind: string;
-      data: Omit<RedditPost, "kind">;
+      data: Omit<RedditPost, "url">;
     }[];
   };
 };
