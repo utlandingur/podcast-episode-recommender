@@ -4,6 +4,9 @@ import { generatePodcastSummary } from "@/utils/generatePodcastSummary";
 import { useQuery } from "@tanstack/react-query";
 import { fetchTrendingRedditData } from "@/utils/fetchRedditData";
 import { generatePodcastRecommendation } from "@/utils/generatePodcastRecommendation";
+
+import { fetchMastadonData } from "@/utils/fetchMastadonData";
+
 import type { PodcastEpisodeForAI } from "@/types/podcasts";
 import { lookupPodcast } from "@/utils/lookupPodcast";
 import { useState } from "react";
@@ -42,6 +45,7 @@ export const useRecommendation = (id: string) => {
   
   // Generate podcast keywords
   setFetchStatus(FetchStatus.KEYWORDS);
+    
   const { response: summaryResponse, error: summaryError } =
     await generatePodcastSummary(episodesToUse, title, description);
 
@@ -52,19 +56,21 @@ export const useRecommendation = (id: string) => {
   }
   const { summary, keywords } = summaryResponse;
 
+
   // Search the web for trending data
   setFetchStatus(FetchStatus.SEARCHING);
+    
+  const recentMastadonSearchData = await fetchMastadonData(keywords);
   const trendingRedditData = await fetchTrendingRedditData(keywords);
 
   // Generate recommendation
   setFetchStatus(FetchStatus.RECOMMENDATION);
+    
   const { response: recommendationResponse, error: recommendationError } =
-    await generatePodcastRecommendation(
-      summary,
-      description,
-      keywords,
-      trendingRedditData
-    );
+    await generatePodcastRecommendation(summary, description, keywords, {
+      trendingRedditData,
+      recentMastadonSearchData,
+    });
 
   setFetchStatus(null);
 
