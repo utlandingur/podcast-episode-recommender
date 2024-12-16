@@ -39,10 +39,12 @@ const searchMastadon = async (
 
   try {
     const response = await fetch(url);
-    console.log("response", response, "for url", url);
     if (!response.ok) throw new Error(`Error: ${response.status}`);
+    console.log("response", response, "for url", url);
     const json: MastadonSearchResponse = await response.json();
+    console.log("Mastadon json", json);
     const searchResults = json.statuses.map((status) => {
+      console.log("status", status);
       const searchResult: MastadonSearchResult = {
         createdAt: status.created_at,
         language: status.language,

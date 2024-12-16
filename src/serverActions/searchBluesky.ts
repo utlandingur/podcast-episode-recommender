@@ -17,8 +17,10 @@ export const searchBluesky = async (query: string): Promise<BlueskyPost[]> => {
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Error: ${response.status}`);
     const json: BlueskySearchResponse = await response.json();
+    console.log("Bluesky json", json);
 
     const blueskyPosts = json.posts.map((post) => {
+      console.log("post", post);
       const { record, langs, author, replyCount, likeCount, quoteCount, uri } =
         post;
       const blueskyPost: BlueskyPost = {
@@ -34,8 +36,13 @@ export const searchBluesky = async (query: string): Promise<BlueskyPost[]> => {
       return blueskyPost;
     });
     return blueskyPosts;
-  } catch {
-    console.error("Failed to fetch Bluesky data for query:", query);
+  } catch (error) {
+    console.error(
+      "Failed to fetch Bluesky data for query:",
+      query,
+      "with error",
+      error
+    );
     return [];
   }
 };
