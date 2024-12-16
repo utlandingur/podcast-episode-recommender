@@ -12,13 +12,35 @@ export enum FetchStatus {
   KEYWORDS = "Generating relevant keywords",
   SEARCHING = "Searching the web",
   RECOMMENDATION = "Generating recommendation",
+  COMPLETE = "Recommendation generated",
 }
 
+export type PodcastInfo = {
+  title: string | null;
+  keywords: string[] | null;
+  summary: string | null;
+  image: string | null;
+  audience: string | null;
+  niche: string | null;
+};
+
 export const useRecommendation = (id: string) => {
-  const [fetchStatus, setFetchStatus] = useState<FetchStatus | null>(null);
+  const [fetchStatus, setFetchStatus] = useState<FetchStatus>(
+    FetchStatus.SEARCHING
+  );
+  const [podcastInfo, setPodcastInfo] = useState<PodcastInfo>({
+    title: null,
+    image: null,
+    keywords: null,
+    summary: null,
+    audience: null,
+    niche: null,
+  });
 
   const fetchRecommendation = async (id: string) => {
-    const { title, description } = await lookupPodcast(id);
+    const { title, description, image } = await lookupPodcast(id);
+
+    setPodcastInfo((prev) => ({ ...prev, title, image }));
 
     // Fetch podcast information
     setFetchStatus(FetchStatus.PODCAST);
@@ -26,11 +48,12 @@ export const useRecommendation = (id: string) => {
 
     // Generate podcast keywords
     setFetchStatus(FetchStatus.KEYWORDS);
-    const { keywords, summary } = await fetchKeywords(
+    const { keywords, summary, audience, niche } = await fetchKeywords(
       episodes,
       title,
       description
     );
+    setPodcastInfo((prev) => ({ ...prev, keywords, summary, audience, niche }));
 
     // Search the web for trending data
     setFetchStatus(FetchStatus.SEARCHING);
@@ -39,29 +62,26 @@ export const useRecommendation = (id: string) => {
     // Generate recommendation
     setFetchStatus(FetchStatus.RECOMMENDATION);
 
-    console.log("data sent is", {
-      summary,
-      description,
-      keywords,
-      trendingData,
-    });
-
     const { response: recommendation, error: recommendationError } =
       await generatePodcastRecommendation(
         summary,
         description,
+        niche,
+        audience,
         keywords,
         trendingData
       );
 
     if (!recommendation || recommendationError) {
       //TODO - handle better
+      setFetchStatus(FetchStatus.COMPLETE);
+
       console.error("No recommendation generated", recommendationError);
       throw new Error("No recommendation generated");
     }
 
-    setFetchStatus(null);
-    console.log("recommendation is", recommendation);
+    setFetchStatus(FetchStatus.COMPLETE);
+
     return recommendation;
   };
 
@@ -87,6 +107,7 @@ export const useRecommendation = (id: string) => {
 
   return {
     recommendation,
+    podcastInfo,
     error, // only show error if not fetching
     isLoading,
     fetchStatus,

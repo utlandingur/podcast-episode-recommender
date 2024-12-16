@@ -12,6 +12,14 @@ const schemaProperties = {
     description:
       "A paragraphy summary of the topics recommended for discussion for the podcast's niche.",
   },
+  audience: {
+    type: SchemaType.STRING,
+    description: "A detailed description of the podcast's audience",
+  },
+  niche: {
+    type: SchemaType.STRING,
+    description: "Highly specific niche for the podcast",
+  },
   keywords: {
     type: SchemaType.ARRAY,
     items: {

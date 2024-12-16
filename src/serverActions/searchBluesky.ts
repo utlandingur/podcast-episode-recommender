@@ -9,7 +9,7 @@ export const searchBluesky = async (query: string): Promise<BlueskyPost[]> => {
     "https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts"
   );
   url.searchParams.append("q", query);
-  url.searchParams.append("limit", "50"); // 100 is the max limit
+  url.searchParams.append("limit", "30"); // 100 is the max limit
   url.searchParams.append("sort", "top");
   url.searchParams.append("since", getDateAWeekAgo().toISOString());
 
@@ -17,10 +17,8 @@ export const searchBluesky = async (query: string): Promise<BlueskyPost[]> => {
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Error: ${response.status}`);
     const json: BlueskySearchResponse = await response.json();
-    console.log("Bluesky json", json);
 
     const blueskyPosts = json.posts.map((post) => {
-      console.log("post", post);
       const { record, author, replyCount, likeCount, quoteCount, uri } = post;
       const blueskyPost: BlueskyPost = {
         createdAt: record.createdAt,

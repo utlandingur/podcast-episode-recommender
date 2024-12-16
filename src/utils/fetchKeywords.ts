@@ -17,7 +17,7 @@ export const fetchKeywords = async (
     console.error("No summary generated", error);
     throw new Error("No summary generated");
   }
-  const { keywords, summary } = response;
+  const { keywords, summary, audience, niche } = response;
 
   if (!keywords?.length) {
     //TODO - handle better
@@ -25,5 +25,5 @@ export const fetchKeywords = async (
     throw new Error("No keywords generated");
   }
 
-  return { keywords, summary };
+  return { keywords, summary, audience, niche };
 };

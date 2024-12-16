@@ -72,7 +72,7 @@ const fetchRedditPosts = async ({
       title: child.data.title,
       subreddit: child.data.subreddit,
       created_utc: child.data.created_utc,
-      url: new URL(`https://www.reddit.com${child.data.permalink}`),
+      url: `https://www.reddit.com${child.data.permalink}`,
       ups: child.data.ups,
       downs: child.data.downs,
       num_comments: child.data.num_comments,

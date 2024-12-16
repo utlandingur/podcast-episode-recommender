@@ -31,7 +31,7 @@ export async function generateMetadata({
 
   return {
     title: `Podcast episode ideas for ${title}`,
-    description: `Generate ideas for your next podcast episode based on what's trending.`,
+    description: `Generate ideas for your next podcast episode based on what's trending on social media.`,
   };
 }
 
@@ -44,7 +44,7 @@ export default async function PodcastPage({ params }: { params: Params }) {
 
   return (
     <main
-      className={`flex flex-col ${geistSans.variable} ${geistMono.variable} antialiased w-dvw h-dvh`}
+      className={`flex flex-col ${geistSans.variable} ${geistMono.variable} antialiased w-dvw min-h-dvh`}
     >
       <Suspense
         fallback={
@@ -58,7 +58,7 @@ export default async function PodcastPage({ params }: { params: Params }) {
         </div>
         <div
           className={cn(
-            "flex flex-col h-full w-full items-center justify-start sm:justify-center p-2 pb-8 sm:p-8 gap-8"
+            "flex flex-col min-h-full w-full items-center justify-start sm:justify-center p-2 pb-8 sm:p-8 gap-8"
           )}
         >
           <RecommendationOverview id={decodedId} />
