@@ -53,6 +53,7 @@ const searchMastadon = async (
           title: status.card.title,
           description: status.card.description,
         },
+        url: status.url,
       };
       return searchResult;
     });

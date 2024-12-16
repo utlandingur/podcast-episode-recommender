@@ -10,6 +10,7 @@ export type MastadonSearchResponse = {
       title: string;
       description: string;
     };
+    url: URL;
   }[];
 };
 
@@ -24,6 +25,7 @@ export type MastadonSearchResult = {
     title: string;
     description: string;
   };
+  url: URL;
 };
 
 export type MastadonSearchData = {
