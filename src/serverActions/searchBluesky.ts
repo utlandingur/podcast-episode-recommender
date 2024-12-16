@@ -9,7 +9,7 @@ export const searchBluesky = async (query: string): Promise<BlueskyPost[]> => {
     "https://public.api.bsky.app/xrpc/app.bsky.feed.searchPosts"
   );
   url.searchParams.append("q", query);
-  url.searchParams.append("limit", "20"); // 100 is the max limit
+  url.searchParams.append("limit", "50"); // 100 is the max limit
   url.searchParams.append("sort", "top");
   url.searchParams.append("since", getDateAWeekAgo().toISOString());
 
