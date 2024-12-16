@@ -1,6 +1,5 @@
 export type BlueskyPost = {
   createdAt: string;
-  language: string;
   author: string;
   textContent: string;
   replyCount: number;
@@ -15,7 +14,6 @@ export type BlueskySearchResponse = {
       createdAt: string;
       text: string;
     };
-    langs: string[];
     author: {
       displayName: string;
       handle: string;

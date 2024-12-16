@@ -21,11 +21,9 @@ export const searchBluesky = async (query: string): Promise<BlueskyPost[]> => {
 
     const blueskyPosts = json.posts.map((post) => {
       console.log("post", post);
-      const { record, langs, author, replyCount, likeCount, quoteCount, uri } =
-        post;
+      const { record, author, replyCount, likeCount, quoteCount, uri } = post;
       const blueskyPost: BlueskyPost = {
         createdAt: record.createdAt,
-        language: langs[0],
         author: author.displayName,
         textContent: record.text,
         replyCount,
