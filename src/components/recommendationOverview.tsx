@@ -1,41 +1,27 @@
 "use client";
+import { PodcastRecommendation } from "./podcastRecommendation";
+import { useRecommendation } from "@/hooks/useRecommendation";
+import { RecommendationStatus } from "./LoadingStatus";
 import { PodcastSummary } from "./podcastSummary";
-import { FetchStatus, useRecommendation } from "@/hooks/useRecommendation";
-import { SorryAnimation, TappingFingers } from "@/assets/Animations";
+import { cn } from "@/lib/utils";
 
 type RecommendationOverviewProps = {
   id: string;
 };
 
 export const RecommendationOverview = ({ id }: RecommendationOverviewProps) => {
-  const { recommendation, error, fetchStatus } = useRecommendation(id);
-
-  if (fetchStatus) return <Loading status={fetchStatus} />;
-
-  if (!recommendation || error) return <Sorry />;
+  const { recommendation, error, fetchStatus, podcastInfo } =
+    useRecommendation(id);
 
   return (
-    <>
-      <h1>Recommendation</h1>
-      <PodcastSummary recommendation={recommendation} />
-    </>
+    <div className={cn("max-w-dvw flex flex-col gap-16 p-4")}>
+      <PodcastSummary podcastInfo={podcastInfo} />
+      <RecommendationStatus
+        status={fetchStatus}
+        error={error}
+        recommendation={recommendation}
+      />
+      <PodcastRecommendation recommendation={recommendation} />
+    </div>
   );
 };
-
-const Sorry = () => (
-  <div className="flex flex-col justify-center items-center">
-    <div className="w-32 h-32">
-      <SorryAnimation />
-    </div>
-    <div>Sorry, something went wrong. Please try again later</div>
-  </div>
-);
-
-const Loading = ({ status }: { status: FetchStatus }) => (
-  <div className="flex flex-col justify-center items-center">
-    <div className="w-32 h-32">
-      <TappingFingers />
-    </div>
-    <div>{status}</div>
-  </div>
-);

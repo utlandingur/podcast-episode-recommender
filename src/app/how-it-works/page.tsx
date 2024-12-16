@@ -9,37 +9,40 @@ import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "How it Works - PodcastToMp3",
+  title: "How It Works - Podmore",
   description:
-    "Learn how to easily convert and download podcasts into MP3 format with PodcastToMp3. Step-by-step guide for downloading your favorite episodes.",
+    "Discover how Podmore helps you generate fresh podcast episode ideas with ease. Search your podcast and get inspired by tailored suggestions based on trends and listener interests.",
   keywords: [
-    "how it works podcast downloader",
-    "download podcasts as mp3",
-    "how to download podcasts",
-    "podcast to mp3 guide",
-    "podcast download tutorial",
+    "how it works podcast ideas",
+    "generate podcast episode ideas",
+    "podcast inspiration tool",
+    "how to get podcast ideas",
+    "podcast episode suggestions",
+    "AI podcast idea generator",
   ],
   openGraph: {
-    title: "How it Works - PodcastToMp3",
+    title: "How It Works - Podmore",
     description:
-      "Step-by-step guide on how to convert and download podcasts as MP3 files. Easily download your favorite podcast episodes.",
-    url: "https://podcasttomp3.com/how-it-works",
+      "Learn how to use Podmore to generate creative podcast episode ideas. Tailored recommendations for your show based on trends and listener interests.",
+    url: "https://podmore.com/how-it-works",
+    siteName: "Podmore",
+    // Uncomment and replace with an actual image URL for SEO optimization
     // images: [
     //   {
-    //     url: "https://podcasttomp3.com/images/og-how-it-works.jpg", // Replace with an image specific to the "How it Works" page
+    //     url: "https://podmore.com/images/og-how-it-works.jpg", // Replace with a relevant image
     //     width: 1200,
     //     height: 630,
-    //     alt: "How it Works - PodcastToMp3", // Descriptive alt text
+    //     alt: "How it Works - Podmore", // Alt text for the image
     //   },
     // ],
-    siteName: "PodcastToMp3",
   },
   twitter: {
-    card: "summary", // Use a larger image for Twitter sharing
-    title: "How it Works - PodcastToMp3",
+    card: "summary", // Use a larger image if available for better visibility
+    title: "How It Works - Podmore",
     description:
-      "Step-by-step guide on how to convert and download podcasts as MP3 files. Easily download your favorite podcast episodes.",
-    // images: ["https://podcasttomp3.com/images/og-how-it-works.jpg"], // Twitter card image
+      "Use Podmore to generate podcast episode ideas tailored to your show. Get inspired by creative, trend-based suggestions!",
+    // Uncomment and replace with a relevant Twitter card image
+    // images: ["https://podmore.com/images/og-how-it-works.jpg"], // Image for Twitter card
   },
 };
 

@@ -5,7 +5,7 @@ export type BlueskyPost = {
   replyCount: number;
   likeCount: number;
   quoteCount: number;
-  url: URL;
+  url: string;
 };
 
 export type BlueskySearchResponse = {

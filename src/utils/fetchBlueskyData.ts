@@ -25,7 +25,7 @@ export const fetchBlueskyData = async (
   }
 };
 
-export const generatePostLink = (handle: string, uri: string): URL => {
+export const generatePostLink = (handle: string, uri: string): string => {
   const postId = uri.split("/").pop(); // Extract the last part of the URI
-  return new URL(`https://bsky.app/profile/${handle}/post/${postId}`);
+  return `https://bsky.app/profile/${handle}/post/${postId}`;
 };

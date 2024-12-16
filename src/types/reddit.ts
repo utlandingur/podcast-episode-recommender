@@ -4,7 +4,7 @@ export type RedditPost = {
   subreddit: string;
   created_utc: number;
   permalink?: string;
-  url: URL;
+  url: string;
   ups: number;
   downs: number;
   num_comments: number;
