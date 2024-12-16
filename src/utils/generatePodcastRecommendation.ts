@@ -1,6 +1,8 @@
+import { getGeminiResponse } from "@/serverActions/getGeminiResponse";
 import type { InferSchema } from "@/types/gemini";
 import { RedditPost } from "@/types/reddit";
-import { createSchema, generateContent } from "@/utils/geminiModel";
+import { createSchema } from "@/utils/geminiUtils";
+
 import { SchemaType } from "@google/generative-ai";
 
 const schemaProperties = {
@@ -75,13 +77,23 @@ const schema = createSchema(
 
 export type Recommendation = InferSchema<typeof schemaProperties>;
 
+/**
+ * Generates a summary and specific keywords for a podcast.
+ *
+ * @param {string} summary - A summary of the podcast.
+ * @param {string} description - The description of the podcast.
+ * @param {string[]} keywords - Keywords for the podcast.
+ * @returns {RedditPost[]} - A list of relevant Reddit posts.
+ */
 export const generatePodcastRecommendation = async (
   summary: string,
+  description: string,
   keywords: string[],
   redditPosts: RedditPost[]
 ) => {
-  return await generateContent<Recommendation>(schema, {
+  return await getGeminiResponse<Recommendation>(schema, {
     summary,
+    description,
     keywords,
     redditPosts,
   });

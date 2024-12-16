@@ -4,6 +4,8 @@ import { generatePodcastSummary } from "@/utils/generatePodcastSummary";
 import { useQuery } from "@tanstack/react-query";
 import { fetchTrendingRedditData } from "@/utils/fetchRedditData";
 import { generatePodcastRecommendation } from "@/utils/generatePodcastRecommendation";
+import type { PodcastEpisodeForAI } from "@/types/podcasts";
+import { lookupPodcast } from "@/utils/lookupPodcast";
 import { useState } from "react";
 
 export enum FetchStatus {
@@ -17,48 +19,63 @@ export const useRecommendation = (id: string) => {
   const [fetchStatus, setFetchStatus] = useState<FetchStatus | null>(null);
 
   const fetchRecommendation = async (id: string) => {
-    // Fetch podcast episodes
-    setFetchStatus(FetchStatus.PODCAST);
-    const episodes = await lookupPodcastEpisodes(id);
-    if (episodes?.length < 2) {
-      //TODO - handle better
-      console.error("No episodes found");
-      throw new Error("No episodes found");
-    }
+  const { description, title } = await lookupPodcast(id);
+  
+  // Fetch podcast information
+  setFetchStatus(FetchStatus.PODCAST);
 
-    // Generate podcast keywords
-    setFetchStatus(FetchStatus.KEYWORDS);
-    const { response: summaryResponse, error: summaryError } =
-      await generatePodcastSummary(episodes.slice(1)); // Remove the first episode, which is the podcast itself
-    if (!summaryResponse || summaryError) {
-      //TODO - handle better
-      console.error("No summary generated", summaryError);
-      throw new Error("No summary generated");
-    }
-    const { summary, keywords } = summaryResponse;
+  const episodes = await lookupPodcastEpisodes(id);
+  if (episodes?.length < 2) {
+    //TODO - handle better
+    console.error("No episodes found");
+    throw new Error("No episodes found");
+  }
 
-    // Search the web for trending data
-    setFetchStatus(FetchStatus.SEARCHING);
-    const trendingRedditData = await fetchTrendingRedditData(keywords);
+  const episodesToUse = episodes.map((episode) => {
+    const episodeForAI: PodcastEpisodeForAI = {
+      description: episode.description,
+      datePublished: episode.datePublished,
+      transcripts: episode.transcripts,
+    };
+    return episodeForAI;
+  });
+  
+  // Generate podcast keywords
+  setFetchStatus(FetchStatus.KEYWORDS);
+  const { response: summaryResponse, error: summaryError } =
+    await generatePodcastSummary(episodesToUse, title, description);
 
-    // Generate recommendation
-    setFetchStatus(FetchStatus.RECOMMENDATION);
-    const { response: recommendationResponse, error: recommendationError } =
-      await generatePodcastRecommendation(
-        summary,
-        keywords,
-        trendingRedditData
-      );
+  if (!summaryResponse || summaryError) {
+    //TODO - handle better
+    console.error("No summary generated", summaryError);
+    throw new Error("No summary generated");
+  }
+  const { summary, keywords } = summaryResponse;
 
-    setFetchStatus(null);
-    if (!recommendationResponse || recommendationError) {
-      //TODO - handle better
-      console.error("No recommendation generated", recommendationError);
-      throw new Error("No recommendation generated");
-    }
+  // Search the web for trending data
+  setFetchStatus(FetchStatus.SEARCHING);
+  const trendingRedditData = await fetchTrendingRedditData(keywords);
 
-    return recommendationResponse;
-  };
+  // Generate recommendation
+  setFetchStatus(FetchStatus.RECOMMENDATION);
+  const { response: recommendationResponse, error: recommendationError } =
+    await generatePodcastRecommendation(
+      summary,
+      description,
+      keywords,
+      trendingRedditData
+    );
+
+  setFetchStatus(null);
+
+  if (!recommendationResponse || recommendationError) {
+    //TODO - handle better
+    console.error("No recommendation generated", recommendationError);
+    throw new Error("No recommendation generated");
+  }
+
+  return recommendationResponse;
+};
 
   const {
     data: recommendation,

@@ -1,25 +1,46 @@
 export type Podcast = {
-  collectionName: string;
+  id: number;
+  title: string;
   feedUrl: string;
-  artworkUrl30: string;
-  artworkUrl60: string;
-  artworkUrl100: string;
-  artworkUrl600: string;
-  collectionId: string;
+  description: string;
+  image: string;
+  language: string;
+  type: number; // 0:RSS, 1:Atom
+  dead: boolean; // Once the feed is marked dead, checked once per month.
+  episodeCount: number;
+  newestItemPubdate: number;
   trackCount: string;
 };
 
-export type PodcastEpisode = {
-  trackName: string;
-  trackId: string;
-  collectionId: string;
-  collectionName: string;
-  feedUrl: string;
-  artworkUrl100: string;
-  artworkUrl600: string;
-  releaseDate: Date;
-  trackTimeMillis: number;
-  trackCount: string;
-  trackViewUrl: string;
-  episodeUrl: string;
+enum TranscriptType {
+  ApplicationJson = "application/json",
+  ApplicationSrt = "application/srt",
+  TextHtml = "text/html",
+  TextPlain = "text/plain",
+  TextSrt = "text/srt",
+  TextVtt = "text/vtt",
+}
+
+export type PodcastEpisodeResponse = {
+  title: string;
+  description: string;
+  datePublished: string;
+  episode: number;
+  feedLanguage: string;
+  transcriptUrl: URL | null;
+  transcripts: { url: URL; type: TranscriptType }[];
 };
+
+export type PodcastEpisode = {
+  description: string;
+  datePublished: string; // TODO - convert to date
+  episodeNumber: number;
+  language: string;
+  transcriptUrl: URL | null;
+  transcripts: { url: URL; type: TranscriptType }[];
+};
+
+export type PodcastEpisodeForAI = Omit<
+  PodcastEpisode,
+  "collectionName" | "episodeNumber" | "transcriptUrl" | "language"
+>;

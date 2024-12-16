@@ -56,13 +56,10 @@ export const fetchRedditPosts = async ({
     if (!response.ok) throw new Error(`Error: ${response.status}`);
     const json: RedditPostResponse = await response.json();
     const posts: RedditPost[] = json.data.children.map((child) => ({
-      kind: child.kind,
       title: child.data.title,
       subreddit: child.data.subreddit,
-      author: child.data.author,
       created_utc: child.data.created_utc,
       permalink: child.data.permalink,
-      url: child.data.url,
       ups: child.data.ups,
       downs: child.data.downs,
       num_comments: child.data.num_comments,
