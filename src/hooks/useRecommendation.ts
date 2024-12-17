@@ -6,6 +6,7 @@ import { useState } from "react";
 import { fetchTrendingData } from "@/utils/fetchTrendingData";
 import { fetchPodcastInformation } from "@/utils/fetchPodcastInformation";
 import { fetchKeywords } from "@/utils/fetchKeywords";
+import { track } from "@vercel/analytics/react";
 
 export enum FetchStatus {
   PODCAST = "Fetching podcast information",
@@ -75,13 +76,13 @@ export const useRecommendation = (id: string) => {
     if (!recommendation || recommendationError) {
       //TODO - handle better
       setFetchStatus(FetchStatus.COMPLETE);
-
+      track("recommendation error", { id });
       console.error("No recommendation generated", recommendationError);
       throw new Error("No recommendation generated");
     }
 
     setFetchStatus(FetchStatus.COMPLETE);
-
+    track("recommendation provided", { id });
     return recommendation;
   };
 
